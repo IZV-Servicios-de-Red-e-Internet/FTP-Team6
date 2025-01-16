@@ -1,0 +1,12 @@
+options {
+    directory "/var/cache/bind";
+    forwarders {
+        8.8.8.8;
+        1.1.1.1;
+    };
+    recursion yes;
+    allow-recursion { any; }; 
+    dnssec-validation auto;
+    listen-on { any; };
+    listen-on-v6 { any; };
+};
