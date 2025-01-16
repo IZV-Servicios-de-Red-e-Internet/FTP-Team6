@@ -1,0 +1,104 @@
+- name: Configurar Servidor FTP con usuarios locales
+  hosts: ftp-local
+  become: true
+  vars:
+    ftp_banner: "Welcome to SRI FTP server"
+
+  tasks:
+
+  - name: Actualizar el índice de paquetes
+    apt:
+      update_cache: yes
+
+  - name: Instalar el paquete vsftpd
+    apt:
+      name: vsftpd
+      state: present
+
+  - name: Configurar archivo de vsftpd
+    copy:
+      dest: /etc/vsftpd.conf
+      content: |
+        listen=YES
+        anonymous_enable=NO
+        local_enable=YES
+        write_enable=YES
+        chroot_local_user=YES
+        allow_writeable_chroot=YES
+        chroot_list_enable=YES
+        chroot_list_file=/etc/vsftpd.chroot_list
+        ftpd_banner={{ ftp_banner }}
+        local_umask=022
+
+  - name: Crear archivo de lista de chroot
+    file:
+      path: /etc/vsftpd.chroot_list
+      state: touch
+
+  # Configuración para el usuario charles
+  - name: Crear usuario charles
+    ansible.builtin.user:
+      name: charles
+      password: "{{ '1234' | password_hash('sha512') }}"
+      create_home: true
+
+  - name: Crear directorio FTP para charles
+    ansible.builtin.file:
+      path: /home/charles/ftp
+      state: directory
+      owner: charles
+      group: charles
+      mode: "0755"
+
+  - name: Crear directorio compartido para charles
+    ansible.builtin.file:
+      path: /home/charles/shared
+      state: directory
+      owner: charles
+      group: charles
+      mode: "0700"
+
+  - name: Agregar charles a la lista de chroot
+    ansible.builtin.lineinfile:
+      path: /etc/vsftpd.chroot_list
+      line: charles
+
+  # Configuración para el usuario laura
+  - name: Crear usuario laura
+    ansible.builtin.user:
+      name: laura
+      password: "{{ '1234' | password_hash('sha512') }}"
+      create_home: true
+
+  - name: Crear directorio FTP para laura
+    ansible.builtin.file:
+      path: /home/laura/ftp
+      state: directory
+      owner: laura
+      group: laura
+      mode: "0755"
+
+  - name: Crear directorio compartido para laura
+    ansible.builtin.file:
+      path: /home/laura/shared
+      state: directory
+      owner: laura
+      group: laura
+      mode: "0755"
+
+  - name: Agregar laura a la lista de chroot
+    ansible.builtin.lineinfile:
+      path: /etc/vsftpd.chroot_list
+      line: laura
+      state: absent
+
+  - name: Reiniciar el servicio vsftpd
+    ansible.builtin.service:
+      name: vsftpd
+      state: restarted
+
+  - name: Verificar que el servicio vsftpd esté activo
+    ansible.builtin.service:
+      name: vsftpd
+      state: started
+      enabled: true
