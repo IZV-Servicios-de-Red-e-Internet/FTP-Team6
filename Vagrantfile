@@ -6,7 +6,8 @@ Vagrant.configure("2") do |config|
     dns.vm.hostname = "dns.sri.ies"
     dns.vm.network "private_network", ip: "192.168.56.10"
     dns.vm.provision "ansible" do |ansible|
-    ansible.playbook = "provisioning/dnsplaybook.yml"
+    ansible.playbook = "dnsplaybook.yml"
+    ansible.compatibility_mode = "2.0"
     end
   end
 
