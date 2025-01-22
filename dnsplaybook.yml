@@ -35,13 +35,6 @@
         owner: bind
         group: bind
 
-    - name: Update resolv.conf to use local DNS
-      lineinfile:
-        path: /etc/resolv.conf
-        regexp: '^nameserver'
-        line: 'nameserver 192.168.56.10'   # Update with the correct IP of your DNS server
-        state: present
-
     - name: Restart BIND9 service
       service:
         name: bind9
