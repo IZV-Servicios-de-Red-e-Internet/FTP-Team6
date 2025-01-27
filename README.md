@@ -38,15 +38,7 @@ vagrant ssh ftp_anonymous
 
 #### 3. Verify the Configuration
 
-- **a) DNS Server**
-
-  From any machine, test name resolution:
-
-  ```bash
-  dig @192.168.56.10 <domain>
-  ```
-
-- **b) FTP SSL/TLS Server**
+- **a) FTP SSL/TLS Server**
 
   Check the secure connection to the FTP server:
 
@@ -54,7 +46,7 @@ vagrant ssh ftp_anonymous
   openssl s_client -connect 192.168.56.11:21 -starttls ftp
   ```
 
-- **c) Anonymous FTP Server**
+- **b) Anonymous FTP Server**
 
   Connect to the anonymous FTP server:
 
