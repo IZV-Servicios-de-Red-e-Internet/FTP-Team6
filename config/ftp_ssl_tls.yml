@@ -1,0 +1,84 @@
+
+
+#Configurar la capa de seguridad SSL/TLS en el servidor FTP (vsftpd)
+
+- name: Configurar SSL/TLS en el servidor FTP
+  hosts: ftp_anonymous
+  become: yes
+  tasks:
+    - name: Generar certificado SSL autofirmado
+      command: openssl req -new -x509 -days 365 -nodes -out /etc/ssl/certs/vsftpd.pem -keyout /etc/ssl/private/vsftpd.key
+      creates: /etc/ssl/certs/vsftpd.pem
+
+    - name: Configurar vsftpd para usar SSL
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#ssl_enable=YES'
+        line: 'ssl_enable=YES'
+
+    - name: Habilitar cifrado para FTP
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#allow_anon_ssl=NO'
+        line: 'allow_anon_ssl=NO'
+
+    - name: Configurar el uso de certificados SSL para vsftpd
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#rsa_cert_file=/etc/ssl/certs/vsftpd.pem'
+        line: 'rsa_cert_file=/etc/ssl/certs/vsftpd.pem'
+
+    - name: Configurar la clave SSL para vsftpd
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#rsa_private_key_file=/etc/ssl/private/vsftpd.key'
+        line: 'rsa_private_key_file=/etc/ssl/private/vsftpd.key'
+
+    - name: Habilitar el protocolo TLS en vsftpd
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#ssl_tlsv1=YES'
+        line: 'ssl_tlsv1=YES'
+
+    - name: Forzar que el servidor FTP use SSL/TLS
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#force_local_data_ssl=YES'
+        line: 'force_local_data_ssl=YES'
+
+    - name: Forzar conexiones seguras de control
+      lineinfile:
+        path: /etc/vsftpd.conf
+        regexp: '^#force_local_logins_ssl=YES'
+        line: 'force_local_logins_ssl=YES'
+
+    - name: Reiniciar el servicio vsftpd
+      systemd:
+        name: vsftpd
+        state: restarted
+#verificar
+- name: Probar la conexión FTP con SSL/TLS
+  hosts: localhost
+  become: no
+  tasks:
+    - name: Conectar con FTP en modo pasivo y verificar conexión segura
+      command: "lftp -u anonymous, -e 'open ftps://192.168.56.11; quit'"
+      register: ftps_connection
+
+    - name: Verificar que la conexión esté cifrada
+      assert:
+        that:
+          - "'SSL' in ftps_connection.stderr"
+
+- name: Verificar la configuración SSL en el servidor FTP
+  hosts: localhost
+  become: no
+  tasks:
+    - name: Verificar el certificado SSL
+      command: "openssl s_client -connect 192.168.56.11:21 -starttls ftp"
+      register: ssl_check
+
+    - name: Comprobar que el certificado es válido
+      assert:
+        that:
+          - "ssl_check.stdout | search('Verify return code: 0 (ok)')"

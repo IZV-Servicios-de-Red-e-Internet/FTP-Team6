@@ -5,30 +5,53 @@ Vagrant.configure("2") do |config|
   config.vm.define "dns_server" do |dns|
     dns.vm.hostname = "dns.sri.ies"
     dns.vm.network "private_network", ip: "192.168.56.10"
-    
   end
 
   # FTP Anonymous Server
   config.vm.define "ftp_anonymous" do |ftp_anon|
     ftp_anon.vm.hostname = "ftp-anonymous"
     ftp_anon.vm.network "private_network", ip: "192.168.56.11"
-    config.vm.provision "ansible" do |ansible|
-      ansible.playbook ="config/ftp_anonymous.yml"
+
+    # Provisioning Ansible
+    ftp_anon.vm.provision "shell", inline: "sudo apt update && sudo apt install -y ansible"
+
+    # FTP configuration playbook
+    ftp_anon.vm.provision "ansible" do |ansible|
+      ansible.playbook = "config/ftp_anonymous.yml"
+      ansible.compatibility_mode = "2.0"
+      ansible.extra_vars = {
+        ansible_python_interpreter: "/usr/bin/python3" # Use Python3 for Ansible
+      }
     end
-  end
+  end #
+
+  # FTP SSL/TLS Configuration
+  config.vm.define "ftp_ssl_tls" do |ftp_ssl_tls|
+    ftp_ssl_tls.vm.hostname = "ftp-ssl-tls"
+    ftp_ssl_tls.vm.network "private_network", ip: "192.168.56.14"
+
+    # Provisioning SSL/TLS playbook
+    ftp_ssl_tls.vm.provision "ansible" do |ansible|
+      ansible.playbook = "config/ftp_ssl_tls.yml"  # Path to the SSL/TLS playbook
+    end
+  end 
 
   # FTP Local User Server
   config.vm.define "ftp-local" do |ftp_local|
     ftp_local.vm.hostname = "ftp-local"
     ftp_local.vm.network "private_network", ip: "192.168.56.12"
+
+    # Provisioning Ansible for local FTP server
     ftp_local.vm.provision "ansible" do |ansible|
       ansible.playbook = "config/ftp_local.yml"
+      ansible.compatibility_mode = "1.8"
     end
-  end
+  end# 
 
   # Test Client
   config.vm.define "client" do |client|
     client.vm.hostname = "test-client"
     client.vm.network "private_network", ip: "192.168.56.13"
-  end
-end
+  end 
+
+end 

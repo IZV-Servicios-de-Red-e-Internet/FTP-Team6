@@ -1,3 +1,4 @@
+
 ---
 - name: Install and configure FTP server (vsftpd)
   hosts: ftp_anonymous
@@ -105,3 +106,5 @@
     - name: Verify timeout occurs after 30 seconds of inactivity
       command: "ftp 192.168.56.11"
       register: timeout_test
+
+
