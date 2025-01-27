@@ -1,8 +1,18 @@
+- name: Update resolv.conf to use local DNS
+  hosts: all
+  become: yes
+  tasks:
+    - name: Add local DNS to resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 192.168.56.10"
+        state: present
+
 - name: Configurar Servidor FTP con usuarios locales
   hosts: ftp-local
   become: true
   vars:
-    ftp_banner: "Welcome to FTP Local Users server"
+    ftp_banner: "Welcome to SRI FTP server"
 
   tasks:
 
@@ -102,3 +112,4 @@
       name: vsftpd
       state: started
       enabled: true
+
