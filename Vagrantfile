@@ -10,8 +10,9 @@ Vagrant.configure("2") do |config|
       ansible.playbook = "dnsplaybook.yml"
     end
   end
+ 
 
-  # FTP Anonymous Server
+# FTP Anonymous Server
   config.vm.define "ftp_anonymous" do |ftp_anon|
     ftp_anon.vm.hostname = "ftp-anonymous"
     ftp_anon.vm.network "private_network", ip: "192.168.56.11"

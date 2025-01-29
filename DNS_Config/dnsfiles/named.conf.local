@@ -1,0 +1,4 @@
+zone "sri.ies" {
+    type master;
+    file "/etc/bind/zones/db.sri.ies";
+};

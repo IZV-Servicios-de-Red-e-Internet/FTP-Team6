@@ -1,0 +1,47 @@
+- name: Configure BIND9 DNS Server
+  hosts: all
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install BIND9
+      apt:
+        name: bind9
+        state: present
+
+    - name: Create zones directory
+      file:
+        path: /etc/bind/zones
+        state: directory
+        owner: bind
+        group: bind
+
+    - name: Copy named.conf.local
+      copy:
+        src: DNS_Config/dnsfiles/named.conf.local
+        dest: /etc/bind/named.conf.local
+
+    - name: Copy named.conf.options
+      copy:
+        src: DNS_Config/dnsfiles/named.conf.options
+        dest: /etc/bind/named.conf.options
+
+    - name: Copy forward zone file
+      copy:
+        src: DNS_Config/dnsfiles/db.sri.ies
+        dest: /etc/bind/zones/db.sri.ies
+        owner: bind
+        group: bind
+        
+    - name: Add local DNS to resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 192.168.56.10"
+        state: present
+            
+    - name: Restart BIND9 service
+      service:
+        name: bind9
+        state: restarted
