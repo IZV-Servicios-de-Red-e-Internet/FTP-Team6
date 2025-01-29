@@ -34,15 +34,13 @@
         dest: /etc/bind/zones/db.sri.ies
         owner: bind
         group: bind
-    - name: Update resolv.conf to use local DNS
-      hosts: all
-      become: yes
-      tasks:
-        - name: Add local DNS to resolv.conf
-          lineinfile:
-            path: /etc/resolv.conf
-            line: "nameserver 192.168.56.10"
-            state: present
+        
+    - name: Add local DNS to resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 192.168.56.10"
+        state: present
+            
     - name: Restart BIND9 service
       service:
         name: bind9
