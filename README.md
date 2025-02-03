@@ -1,5 +1,5 @@
 # FTP-Team6 Exercise
-## DNS
+## DNS (Dario Gonzalez Blanco)
 ### Starting Configuration
 Before Starting with the DNS configuration, we need to make sure that we have configured our other machines with the correct configuration so they can use the correct DNS server.
 In order to do this, is pretty straightforward, we just need to change the file /etc/resolv.conf and add the ip address of the DNS server that we are going to configure.
