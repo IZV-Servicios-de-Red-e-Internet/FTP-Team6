@@ -112,7 +112,14 @@ options {
     listen-on-v6 { any; };
 };
 ```
+### Tests
+#### ansible-lint
+```
+root@a112:/home/asir/Descargas/FTP-Team6-main (2)/FTP-Team6-main# ansible-lint dnsplaybook.yml 
 
+Passed: 0 failure(s), 0 warning(s) on 1 files. Last profile that met the validation criteria was 'production'.
+```
+We can see that it passes the ansible-lint test, which means that the playbook is properly defined
 ## Local FTP Server (Juan Pablo Vega Navarro)
 
 We use a Vagrant file and Ansible config to make the server
