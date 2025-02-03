@@ -1,47 +1,52 @@
+---
 - name: Configure BIND9 DNS Server
   hosts: all
   become: true
   tasks:
     - name: Update apt cache
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
 
     - name: Install BIND9
-      apt:
+      ansible.builtin.apt:
         name: bind9
         state: present
 
     - name: Create zones directory
-      file:
+      ansible.builtin.file:
         path: /etc/bind/zones
         state: directory
         owner: bind
         group: bind
+        mode: '0750'
 
     - name: Copy named.conf.local
-      copy:
+      ansible.builtin.copy:
         src: DNS_Config/dnsfiles/named.conf.local
         dest: /etc/bind/named.conf.local
+        mode: '0644'
 
     - name: Copy named.conf.options
-      copy:
+      ansible.builtin.copy:
         src: DNS_Config/dnsfiles/named.conf.options
         dest: /etc/bind/named.conf.options
+        mode: '0644'
 
     - name: Copy forward zone file
-      copy:
+      ansible.builtin.copy:
         src: DNS_Config/dnsfiles/db.sri.ies
         dest: /etc/bind/zones/db.sri.ies
         owner: bind
         group: bind
-        
+        mode: '0644'
+
     - name: Add local DNS to resolv.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/resolv.conf
         line: "nameserver 192.168.56.10"
         state: present
-            
+
     - name: Restart BIND9 service
-      service:
+      ansible.builtin.service:
         name: bind9
         state: restarted
