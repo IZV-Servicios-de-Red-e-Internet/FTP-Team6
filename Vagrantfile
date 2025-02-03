@@ -34,5 +34,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "client" do |client|
     client.vm.hostname = "test-client"
     client.vm.network "private_network", ip: "192.168.56.13"
+    client.vm.provision "ansible" do |ansible|
+      ansible.playbook ="resolv.yml"
   end
+end
 end
