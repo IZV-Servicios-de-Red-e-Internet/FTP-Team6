@@ -231,3 +231,10 @@ Next step is make the creation of the users that we need
 ```
 
 With that we make the user, shared directory and add to chroot list
+
+#### Ansible-lint
+```
+juanpablo@Debian-PC05:~/Descargas/FTP-Team6-main$ ansible-lint config/ftp_local.yml 
+
+Passed with production profile: 0 failure(s), 0 warning(s) on 1 files.
+```
