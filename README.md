@@ -1,3 +1,4 @@
+# FTP Anonymous (Javier Caldevilla)
 # Playbook de Ansible para Instalar y Configurar un Servidor FTP (vsftpd)
 
 Este repositorio contiene un playbook de Ansible que automatiza la instalación y configuración de un servidor FTP utilizando `vsftpd`. El playbook está diseñado para configurar un servidor FTP que permita conexiones anónimas con ciertas restricciones de seguridad.
